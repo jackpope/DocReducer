@@ -7,5 +7,6 @@
                 "doc"
             ]
         }
-    ]
+    ],
+    "destination": "/tmp/collected_docs/"
 }
