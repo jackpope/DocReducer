@@ -1,0 +1,17 @@
+{
+  "name": "multi-repo-docs",
+  "version": "1.0.0",
+  "description": "Pull docs from multiple Github repos into a single VuePress site",
+  "main": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jack Pope (@jackpope)",
+  "license": "MIT",
+  "bin": {
+    "pull-docs": "./cli.js"
+  },
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
