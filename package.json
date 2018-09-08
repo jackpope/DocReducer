@@ -9,7 +9,7 @@
   "author": "Jack Pope (@jackpope)",
   "license": "MIT",
   "bin": {
-    "pull-docs": "./cli.js"
+    "pull-docs": "./src/cli.js"
   },
   "dependencies": {
     "request": "^2.88.0"
