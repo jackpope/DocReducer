@@ -7,25 +7,14 @@ const fs = require('fs'),
 
 // Get provided args
 const [,, ...args] = process.argv;
-
-const configData = {
-    sources: [
-        {
-            org: "contently",
-            repo: "contently",
-            directories: [
-                "doc"
-            ]
-        }
-
-    ]
-}
+const cwd = process.cwd();
+const configData = JSON.parse(fs.readFileSync(cwd + "/doc-reducer.json", "utf8"));
 
 // TODO: get this destination from CLI args
 const destination = "/tmp/collected_docs/"
 
 const requestFileCallback = function(file) {
-    const dir = process.cwd() + destination,
+    const dir = cwd + destination,
         filePath = dir + file.name;
 
     if (fs.existsSync(dir)) {

@@ -1,0 +1,11 @@
+{
+    "sources": [
+        {
+            "org": "contently",
+            "repo": "contently",
+            "directories": [
+                "doc"
+            ]
+        }
+    ]
+}
