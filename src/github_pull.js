@@ -1,6 +1,7 @@
 "use strict";
 
 const request = require("request"),
+    state = require("./state.js").init(),
     writeFile = require("./write_files.js");
 const headers = {
     "Authorization": `token ${process.env.GITHUB_TOKEN}`,
@@ -15,29 +16,30 @@ const requestFile = function (file) {
     });
 };
 
-const requestDir = function (source, dirName) {
+const requestDir = function (dir) {
     const requestData = {
-        url: `https://api.github.com/repos/${source.org}/${source.repo}/contents/${dirName}`,
+        url: `https://api.github.com/repos/${dir.org}/${dir.repo}/contents/${dir.dir}`,
         headers: headers
     };
     request(requestData, function (error, response, body) {
         if (!error && response.statusCode == 200) {
-            const filesToDownload = JSON.parse(body).map((doc) => {
-                return {
-                    name: doc.name,
-                    url: doc.download_url,
-                    type: doc.type,
-                    path: doc.path,
-                    repo: source.repo
-                };
-            });
-            filesToDownload.forEach((file) => {
-                if (file.type === "dir") {
-                    requestDir(source, file.path);
+            JSON.parse(body).forEach((doc) => {
+                if (doc.type === "dir") {
+                    let subDir = Object.assign({}, dir, { dir: doc.path });
+                    requestDir(subDir);
                 } else {
-                    requestFile(file);
+                    state.addFile(dir.id, {
+                        name: doc.name,
+                        url: doc.download_url,
+                        type: doc.type,
+                        path: doc.path,
+                        status: "found",
+                        repo: dir.repo
+                    });
                 }
             });
+
+            state.unprocessedForDir(dir.id).forEach((file) => requestFile(file));
         } else {
             console.log(requestData.url);
             console.log(response.statusCode);
@@ -45,8 +47,4 @@ const requestDir = function (source, dirName) {
     });
 };
 
-const requestSource = function (source, requestFileCallback) {
-    source.directories.forEach((dir) => requestDir(source, dir, requestFileCallback));
-};
-
-module.exports = requestSource;
+module.exports = requestDir;
