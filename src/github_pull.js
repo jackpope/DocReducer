@@ -23,7 +23,13 @@ const requestDir = function (source, dirName) {
     request(requestData, function (error, response, body) {
         if (!error && response.statusCode == 200) {
             const filesToDownload = JSON.parse(body).map((doc) => {
-                return ({ name: doc.name, url: doc.download_url, type: doc.type, path: doc.path });
+                return {
+                    name: doc.name,
+                    url: doc.download_url,
+                    type: doc.type,
+                    path: doc.path,
+                    repo: source.repo
+                };
             });
             filesToDownload.forEach((file) => {
                 if (file.type === "dir") {

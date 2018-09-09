@@ -6,7 +6,7 @@ const fs = require("fs"),
     );
 
 const writeFile = function(file) {
-    const baseDir = process.cwd() + configData.destination,
+    const baseDir = process.cwd() + configData.destination + `${file.repo}/`,
         filePath = baseDir + file.path.split("/").slice(1).join("/"),
         dir = filePath.split("/").slice(0, -1).join("/");
 

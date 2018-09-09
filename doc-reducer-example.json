@@ -1,0 +1,12 @@
+{
+  "sources": [
+    {
+      "org": "org-name",
+      "repo": "repo-name",
+      "directories": [
+        "doc"
+      ]
+    }
+  ],
+  "destination": "/tmp/collected_docs/"
+}
