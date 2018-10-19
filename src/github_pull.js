@@ -2,18 +2,22 @@
 
 const request = require("request"),
     state = require("./state.js").init(),
-    writeFile = require("./write_files.js");
+    writeFile = require("./write_files.js"),
+    generateReadmeForDir = require("./generate_readme.js");
 const headers = {
     "Authorization": `token ${process.env.GITHUB_TOKEN}`,
     "Accept": "application/vnd.github.v3.raw",
     "User-Agent": "jackpope"
 };
 
-const requestFile = function (file) {
-    request({ url: file.url, headers: headers }, function (error, response, body) {
-        file.contents = body;
-        writeFile(file);
-    });
+const buildAndWriteFiles = function (file) {
+    if (file.source === "github") {
+        request({ url: file.url, headers: headers }, function (error, response, body) {
+            file.contents = body;
+        });
+    }
+
+    writeFile(file);
 };
 
 const requestDir = function (dir) {
@@ -26,7 +30,8 @@ const requestDir = function (dir) {
             JSON.parse(body).forEach((doc) => {
                 if (doc.type === "dir") {
                     let subDir = Object.assign({}, dir, { dir: doc.path });
-                    requestDir(subDir);
+                    subDir = state.addSubDir(dir.id, subDir);
+                    return requestDir(subDir);
                 } else {
                     state.addFile(dir.id, {
                         name: doc.name,
@@ -34,12 +39,15 @@ const requestDir = function (dir) {
                         type: doc.type,
                         path: doc.path,
                         status: "found",
-                        repo: dir.repo
+                        repo: dir.repo,
+                        source: "github"
                     });
                 }
             });
 
-            state.unprocessedForDir(dir.id).forEach((file) => requestFile(file));
+            const readme = generateReadmeForDir(dir)
+            if (readme) state.addFile(dir.id, readme);
+            dir.files.forEach((file) => buildAndWriteFiles(file));
         } else {
             console.log(requestData.url);
             console.log(response.statusCode);

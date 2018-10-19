@@ -6,6 +6,7 @@ const directoryState = Object.freeze({
     org: "",
     repo: "",
     dir: "",
+    directories: [],
     files: []
 });
 let state;
@@ -16,6 +17,45 @@ const guid = function() {
     };
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
 };
+
+// const recursiveDirFind = (obj, id) => {
+//     if (obj.id === id) return true;
+//     if (obj.directories.map( dir => recursiveDirFind(dir, id));
+//     // if id matches, return true
+// }
+
+// {
+//     directories: [
+//         {
+//             id:
+//             directories: [
+//                 {id: }
+//             ]
+//         }
+//     ]
+// }
+
+const findDir = (currentDir, id) => {
+    if (id === currentDir.id) {
+        return currentDir;
+    } else {
+        // Use a for loop instead of forEach to avoid nested functions
+        // Otherwise "return" will not work properly
+        console.log(currentDir.directories);
+        for (var i = 0; i < currentDir.directories.length; i += 1) {
+            const currentChildDir = currentDir.directories[i];
+            console.log(currentChildDir)
+            // Search in the current child
+            const result = findDir(currentChildDir, id);
+            // Return the result if the node has been found
+            if (result !== false) {
+                return result;
+            }
+        }
+        // The node has not been found and we have no more options
+        return false;
+    }
+}
 
 // Read config file and store data as 'state'
 const configDataToState = function() {
@@ -34,7 +74,7 @@ const configDataToState = function() {
                     dir: dir,
                     id: guid()
                 });
-                console.log(dirState);
+                // console.log(dirState);
                 dirCollection.push(dirState);
             });
         });
@@ -54,12 +94,15 @@ module.exports = {
     },
     getState: function() { return state },
     getDir: function(dirId) {
-        return state.directories.find(dir => dir.id === dirId);
+        return findDir(state, dirId);
     },
-    addFile: function(dirId, data) {
-        this.getDir(dirId).files.push(data);
+    addSubDir: function(parentDirId, subDir) {
+        subDir.id = guid();
+        this.getDir(parentDirId).directories.push(subDir);
+        return subDir;
     },
-    unprocessedForDir: function(dirId) {
-        return this.getDir(dirId).files.filter((file) => file.status === "found");
-    },
+    addFile: function(dirId, file) {
+        this.getDir(dirId).files.push(file);
+        return file;
+    }
 }

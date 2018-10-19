@@ -10,18 +10,22 @@ const writeFile = function(file) {
         filePath = baseDir + file.path.split("/").slice(1).join("/"),
         dir = filePath.split("/").slice(0, -1).join("/");
 
-    if (!fs.existsSync(dir)) {
+        if (!fs.existsSync(dir)) {
         console.log(`Creating directory: ${dir}`)
         fs.mkdirSync(dir);
     }
 
-    fs.writeFile(filePath, file.contents, function (err) {
+    if (file.name === "README.md") {
+        console.log(file.path)
+    }
+
+    fs.writeFileSync(filePath, file.contents, function (err) {
         if (err) {
             console.log(err);
             return false;
         }
 
-        console.log(`Saved: ${filePath}`);
+        // console.log(`Saved: ${filePath}`);
     });
 };
 
