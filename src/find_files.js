@@ -1,69 +1,5 @@
-const fs = require('fs');
 const request = require('request');
-
-const configData = JSON.parse(
-  fs.readFileSync(`${process.cwd()}/doc-reducer.json`, 'utf8'),
-);
-
-const directoryState = Object.freeze({
-  org: '',
-  repo: '',
-  dir: '',
-  directories: [],
-  files: [],
-});
-
-const directories = [];
-
-configData.sources.forEach((src) => {
-  const orgName = src.org;
-  src.repos.forEach((repo) => {
-    const repoName = repo.name;
-    repo.directories.forEach((dir) => {
-      const dirState = Object.assign({}, directoryState, {
-        org: orgName,
-        repo: repoName,
-        dir,
-      });
-      // console.log(dirState);
-      directories.push(dirState);
-    });
-  });
-});
-
-const headers = {
-  Authorization: `token ${process.env.GITHUB_TOKEN}`,
-  Accept: 'application/vnd.github.v3.raw',
-  'User-Agent': 'jackpope',
-};
-
-const writeFile = (file, resolve, reject) => {
-  const baseDir = `${process.cwd() + configData.destination}${file.repo}/`;
-  const filePath = baseDir + file.path.split('/').slice(1).join('/');
-  const dir = filePath.split('/').slice(0, -1).join('/');
-
-  if (!fs.existsSync(dir)) {
-    console.log(`Creating directory: ${dir}`);
-    fs.mkdirSync(dir);
-  }
-
-  fs.writeFile(filePath, file.contents, (err) => {
-    if (err) {
-      console.log(err);
-      reject(err);
-    } else {
-      console.log(filePath);
-      resolve();
-    }
-  });
-};
-
-const buildAndWriteFiles = file => new Promise((resolve, reject) => {
-  request({ url: file.url, headers }, (error, response, body) => {
-    file.contents = body;
-    writeFile(file, resolve, reject);
-  });
-});
+const headers = require('./request_headers.js');
 
 const requestDirRecursive = (startingDir) => {
   const fileList = [];
@@ -114,15 +50,16 @@ const requestDirRecursive = (startingDir) => {
       return fileList;
     };
 
-    return getItemList(dir).then(fileListx => Promise.resolve(processItemList(fileListx))).catch(e => console.log(e));
+    return getItemList(dir)
+      .then(completeFileList => Promise.resolve(processItemList(completeFileList)));
   };
 
   return requestDir(startingDir);
 };
 
-const pullFiles = () => {
+const findFiles = (directories) => {
   const promises = directories.map(dir => requestDirRecursive(dir));
   return Promise.all(promises);
 };
 
-module.exports = pullFiles;
+module.exports = findFiles;

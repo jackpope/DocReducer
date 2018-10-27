@@ -1,19 +1,13 @@
 #!/usr/bin/env node
 
-// const state = require("./state.js").init(),
-//     requestDir = require("./github_pull.js");
-
-
-// const init = function() {
-//     state.getState().directories.forEach(dir => requestDir(dir));
-// }
-
+const loadConfig = require('./load_config.js');
 const findFiles = require('./find_files.js');
-const writeFiles = require('./write_files.js');
+const downloadFiles = require('./download_files.js');
 
 (() => {
-  // TODO: first step should be 'validate config' -> pass config to pullFiles()
-  findFiles()
-    .then(writeFiles)
+  loadConfig()
+    .then(findFiles)
+    .then(downloadFiles)
+    .then('ALL FINISHED :)')
     .catch(e => console.log('ERROR:', e));
 })();
