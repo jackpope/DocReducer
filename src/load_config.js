@@ -1,4 +1,5 @@
 const fs = require('fs');
+const logger = require('./logger.js');
 
 const directoryState = Object.freeze({
   org: '',
@@ -28,7 +29,7 @@ const loadConfig = () => new Promise((resolve, reject) => {
         });
       });
     });
-    console.log(directories);
+    logger.log(directories);
     resolve(directories);
   });
 });

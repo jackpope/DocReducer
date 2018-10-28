@@ -1,5 +1,6 @@
 const request = require('request');
 const headers = require('./request_headers.js');
+const logger = require('./logger.js');
 
 const requestDirRecursive = (startingDir) => {
   const fileList = [];
@@ -14,14 +15,21 @@ const requestDirRecursive = (startingDir) => {
       return new Promise((resolve, reject) => {
         request(requestData, (error, response, body) => {
           if (!error && response.statusCode === 200) {
-            const itemList = JSON.parse(body).map(item => ({
-              name: item.name,
-              type: item.type,
-              path: item.path,
-              url: item.download_url,
-              org: readDir.org,
-              repo: readDir.repo,
-            }));
+            const itemList = JSON.parse(body).map((item) => {
+              if (item.type !== 'dir') {
+                logger.progress.addToTotal(1);
+              }
+
+              return {
+                name: item.name,
+                type: item.type,
+                path: item.path,
+                url: item.download_url,
+                org: readDir.org,
+                repo: readDir.repo,
+              };
+            });
+
             resolve(itemList);
           } else {
             reject(Object.assign({}, JSON.parse(body), { for: readDir }));
@@ -37,7 +45,7 @@ const requestDirRecursive = (startingDir) => {
           return;
         }
 
-        console.log('Collected: ', item.url);
+        logger.log('Found: ', item.url);
         fileList.push(item);
       });
 
@@ -47,11 +55,10 @@ const requestDirRecursive = (startingDir) => {
         return requestDir(nextDir);
       }
 
-      return fileList;
+      return Promise.resolve(fileList);
     };
 
-    return getItemList(dir)
-      .then(completeFileList => Promise.resolve(processItemList(completeFileList)));
+    return getItemList(dir).then(processItemList);
   };
 
   return requestDir(startingDir);

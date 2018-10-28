@@ -2,6 +2,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const request = require('request');
 const headers = require('./request_headers.js');
+const logger = require('./logger.js');
 
 const configData = JSON.parse(
   fs.readFileSync(`${process.cwd()}/doc-reducer.json`, 'utf8'),
@@ -14,16 +15,17 @@ const downloadFiles = (fileList) => {
     const dir = filePath.split('/').slice(0, -1).join('/');
 
     if (!fs.existsSync(dir)) {
-      console.log(`Creating directory: ${dir}`);
+      logger.log(`Creating directory: ${dir}`);
       mkdirp.sync(dir);
     }
 
-    request({ url: file.url, headers }).pipe(fs.createWriteStream(filePath))
-      .on('error', (e) => {
-        reject(e);
-      })
+    request({ url: file.url, headers })
+      .on('error', e => reject(e))
+      .pipe(fs.createWriteStream(filePath))
+      .on('error', e => reject(e))
       .on('close', () => {
-        console.log("Wrote: ", filePath);
+        logger.log("Wrote: ", filePath);
+        logger.progress.updateCurrent(1);
         resolve(file);
       });
   });
