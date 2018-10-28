@@ -5,12 +5,18 @@ let bar;
 
 const progress = {
   init: (total, action) => {
-    action = `  ${action}: |:bar| :current of :total`;
-    bar = new ProgressBar(action, {
+    if (bar) {
+      bar.terminate();
+      bar = null;
+    }
+
+    const formattedAction = `  ${action}: |:bar| :current of :total`;
+    bar = new ProgressBar(formattedAction, {
       total,
       complete: '=',
       incomplete: ' ',
-      width: 40,
+      width: 30,
+      renderThrottle: 0,
     });
   },
   updateCurrent: (count) => {

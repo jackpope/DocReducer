@@ -7,6 +7,9 @@ const requestDirRecursive = (startingDir) => {
   const dirQueue = [];
 
   const requestDir = (dir) => {
+    // Store dir data in the fileList to pass it along to following steps
+    fileList.push(Object.assign(dir, { type: 'dir', path: dir.dir }));
+
     const getItemList = (readDir) => {
       const requestData = {
         url: `https://api.github.com/repos/${readDir.org}/${readDir.repo}/contents/${readDir.dir}`,
@@ -65,6 +68,7 @@ const requestDirRecursive = (startingDir) => {
 };
 
 const findFiles = (directories) => {
+  logger.progress.init(0, "Downloading documents");
   const promises = directories.map(dir => requestDirRecursive(dir));
   return Promise.all(promises);
 };

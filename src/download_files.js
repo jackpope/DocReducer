@@ -24,14 +24,21 @@ const downloadFiles = (fileList) => {
       .pipe(fs.createWriteStream(filePath))
       .on('error', e => reject(e))
       .on('close', () => {
-        logger.log("Wrote: ", filePath);
+        logger.log('Wrote: ', filePath);
         logger.progress.updateCurrent(1);
         resolve(file);
       });
   });
 
-  const allFiles = [].concat(...fileList).filter(file => file.type !== 'dir');
-  return Promise.all(allFiles.map(downloadFile));
+  // Only run download on non-dir files,
+  // BUT keep dirs around with resolved promises to pass them to the next step
+  const allFiles = [].concat(...fileList);
+  const realFiles = allFiles
+    .filter(file => file.type !== 'dir');
+  const dirFiles = allFiles
+    .filter(file => file.type === 'dir')
+    .map(dir => Promise.resolve(dir));
+  return Promise.all(realFiles.map(downloadFile).concat(dirFiles));
 };
 
 module.exports = downloadFiles;
