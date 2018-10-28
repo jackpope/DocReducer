@@ -27,7 +27,8 @@ const requestDirRecursive = (startingDir) => {
                 name: item.name,
                 type: item.type,
                 path: item.path,
-                url: item.download_url,
+                downloadUrl: item.download_url,
+                actualUrl: item._links.html,
                 org: readDir.org,
                 repo: readDir.repo,
               };
@@ -48,7 +49,7 @@ const requestDirRecursive = (startingDir) => {
           return;
         }
 
-        logger.log('Found: ', item.url);
+        logger.log('Found: ', item.actualUrl);
         fileList.push(item);
       });
 
@@ -68,7 +69,7 @@ const requestDirRecursive = (startingDir) => {
 };
 
 const findFiles = (directories) => {
-  logger.progress.init(0, "Downloading documents");
+  logger.progress.init(0, 'Downloading documents');
   const promises = directories.map(dir => requestDirRecursive(dir));
   return Promise.all(promises);
 };

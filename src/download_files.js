@@ -19,7 +19,7 @@ const downloadFiles = (fileList) => {
       mkdirp.sync(dir);
     }
 
-    request({ url: file.url, headers })
+    request({ url: file.downloadUrl, headers })
       .on('error', e => reject(e))
       .pipe(fs.createWriteStream(filePath))
       .on('error', e => reject(e))

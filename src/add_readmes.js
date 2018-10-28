@@ -30,7 +30,6 @@ const addReadmes = (fileList) => {
   logger.progress.init(dirList.length, 'Generating README for each directory');
 
   const addReadmeForDir = (dir) => {
-    // logger.progress.updateCurrent(1);
     return new Promise((resolve, reject) => {
       if (!dirNeedsReadme(dir, realFiles)) {
         logger.progress.updateCurrent(1);

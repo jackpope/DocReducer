@@ -12,6 +12,7 @@
     "pull-docs": "./src/cli.js"
   },
   "dependencies": {
+    "common-tags": "^1.8.0",
     "mkdirp": "^0.5.1",
     "progress": "^2.0.1",
     "request": "^2.88.0"
