@@ -6,9 +6,9 @@ const readmeFromTemplate = require('./readme_from_template.js');
 const fileUtils = require('./file_utils.js');
 
 const addReadmes = (fileList) => {
-  const dirList = fileList.filter(file => file.type === 'dir');
-  const realFiles = fileList.filter(file => file.type !== 'dir');
-  logger.progress.init(dirList.length, 'Generating README for each directory');
+  const generatedFiles = [];
+  const needsReadmeList = fileList.filter( file => utils.dirNeedsReadme(file, fileList));
+  logger.progress.init(needsReadmeList.length, 'Generating README for each directory');
 
   const addReadmeForDir = (dir) => {
     return new Promise((resolve, reject) => {
@@ -29,19 +29,21 @@ const addReadmes = (fileList) => {
           return reject(err);
         }
 
+        // Add generated README to fileList
+        generatedFiles.push(Promise.resolve({
+          name: 'README.md',
+          type: 'generated_readme',
+          path: relativePath,
+          org: dir.org,
+          repo: dir.repo,
+        }));
         logger.progress.updateCurrent(1);
         return resolve(dir);
       });
     });
   };
 
-  // Only run readmes on dirs
-  // BUT keep files around with resolved promises to pass them to the next step
-  return Promise.all(
-    dirList
-      .map(addReadmeForDir)
-      .concat(realFiles.map(file => Promise.resolve(file))),
-  );
+  return Promise.all(fileList.map(addReadmeForDir).concat(generatedFiles));
 };
 
 module.exports = addReadmes;
