@@ -33,10 +33,22 @@ const dirNeedsReadme = (dir, allFiles) => isDir(dir)
   && dirContainsMdFile(dir, allFiles)
     && !dirContainsReadmeFile(dir, allFiles);
 
+const resolveLinks = (markdownContent, knownLocations, absoluteLocation) => {
+  const markdownLinkMatcher = /\[([^\[\]]+)\]\(([^)]+)/gm;
+  // return markdownLinkMatcher.exec(markdownContent)
+  let match;
+  // eslint-disable-next-line no-cond-assign
+  while ((match = markdownLinkMatcher.exec(markdownLinkMatcher)) !== null) {
+    console.log(match);
+    // for each match: is it relative? does it?
+  }
+};
+
 module.exports = {
   dirNeedsReadme,
   dirFiles,
   readConfigData,
   isGenerated,
   isMarkdown,
+  resolveLinks
 };

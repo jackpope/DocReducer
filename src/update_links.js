@@ -8,7 +8,7 @@ const updateLinks = (fileList) => {
         return resolve(file);
       }
       console.log(utils.fileLocation(file));
-      resolve(file)
+      resolve(file);
       // fs.readFile(utils.fileLocation(file), 'utf8', (err, data) => {
 
       // });
