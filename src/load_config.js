@@ -6,7 +6,6 @@ const directoryState = Object.freeze({
   repo: '',
   dir: '',
   directories: [],
-  files: [],
 });
 
 const loadConfig = () => new Promise((resolve, reject) => {

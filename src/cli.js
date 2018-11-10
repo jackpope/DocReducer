@@ -12,7 +12,5 @@ const addAttribution = require('./add_attribution.js');
     .then(downloadFiles)
     .then(addReadmes)
     .then(addAttribution)
-    // .then(updateLinks)
-    .then(_=> console.log('ALL FINISHED :)'))
     .catch(e => console.log('ERROR:', e));
 })();

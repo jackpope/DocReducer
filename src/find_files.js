@@ -27,6 +27,7 @@ const requestDirRecursive = (startingDir) => {
                 name: item.name,
                 type: item.type,
                 path: item.path,
+                relativePath: item.path.replace(`${startingDir.dir}/`, ''),
                 downloadUrl: item.download_url,
                 actualUrl: item._links.html,
                 org: readDir.org,
