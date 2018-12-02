@@ -1,4 +1,6 @@
 const request = require('request');
+
+const loadConfig = require('./load_config.js');
 const headers = require('./request_headers.js');
 const logger = require('./logger.js');
 
@@ -69,9 +71,9 @@ const requestDirRecursive = (startingDir) => {
   return requestDir(startingDir);
 };
 
-const findFiles = (directories) => {
+const findFiles = () => {
   logger.progress.init(0, 'Downloading documents');
-  const promises = directories.map(dir => requestDirRecursive(dir));
+  const promises = loadConfig().directories.map(dir => requestDirRecursive(dir));
   return Promise.all(promises);
 };
 

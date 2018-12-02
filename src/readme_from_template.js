@@ -23,7 +23,7 @@ const readmeFromTemplate = (org, repo, files) => {
   let fileLinkStr = '';
   Object.keys(mappedFiles).forEach((key) => {
     const needsSubSection = key !== '__base__';
-    const indentation = needsSubSection ? ' ' : ''
+    const indentation = needsSubSection ? ' ' : '';
     if (needsSubSection) fileLinkStr += `\n #### ${key}\n`;
     fileLinkStr += mappedFiles[key]
       .map(({ name, relativePath }) => `${indentation}- [${name}](./${org}/${repo}/${relativePath})\n`)

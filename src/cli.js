@@ -1,14 +1,12 @@
 #!/usr/bin/env node
 
-const loadConfig = require('./load_config.js');
 const findFiles = require('./find_files.js');
 const downloadFiles = require('./download_files.js');
 const addReadmes = require('./add_readmes.js');
 const addAttribution = require('./add_attribution.js');
 
 (() => {
-  loadConfig()
-    .then(findFiles)
+  findFiles()
     .then(downloadFiles)
     .then(addReadmes)
     .then(addAttribution)
