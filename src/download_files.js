@@ -9,7 +9,7 @@ const logger = require('./logger.js');
 const downloadFiles = (fileList) => {
   const downloadFile = file => new Promise((resolve, reject) => {
     const baseDir = `${process.cwd() + loadConfig().all.destination + file.repo}/`;
-    const filePath = baseDir + file.path.split('/').slice(1).join('/');
+    const filePath = baseDir + (file.path.split('/').slice(1).join('/') || file.path);
     const dir = filePath.split('/').slice(0, -1).join('/');
 
     if (!fs.existsSync(dir)) {

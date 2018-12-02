@@ -2,9 +2,14 @@
   "sources": [
     {
       "org": "org-name",
-      "repo": "repo-name",
-      "directories": [
-        "doc"
+      "repos": [
+        {
+          "name": "repo-name",
+          "directories": [
+            "doc"
+          ],
+          "readmeName": "README.md"
+        }
       ]
     }
   ],

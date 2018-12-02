@@ -4,6 +4,30 @@ const loadConfig = require('./load_config.js');
 const headers = require('./request_headers.js');
 const logger = require('./logger.js');
 
+const buildReadmeData = (readme) => {
+  const downloadUrl = `https://raw.githubusercontent.com/${readme.org}/${readme.repo}/master/${readme.dir}`;
+  const actualUrl = `https://github.com/${readme.org}/${readme.repo}/blob/master/${readme.dir}`;
+  const promise = Promise.resolve(
+    [
+      {
+        name: 'README.md',
+        type: 'file',
+        path: readme.dir,
+        relativePath: readme.dir,
+        downloadUrl,
+        actualUrl,
+        org: readme.org,
+        repo: readme.repo,
+      },
+    ],
+  );
+
+  logger.log('Found: ', actualUrl);
+  logger.progress.addToTotal(1);
+
+  return promise;
+};
+
 const requestDirRecursive = (startingDir) => {
   const fileList = [];
   const dirQueue = [];
@@ -73,7 +97,9 @@ const requestDirRecursive = (startingDir) => {
 
 const findFiles = () => {
   logger.progress.init(0, 'Downloading documents');
-  const promises = loadConfig().directories.map(dir => requestDirRecursive(dir));
+  const promises = loadConfig().directories.map((dir) => {
+    return dir.isReadme ? buildReadmeData(dir) : requestDirRecursive(dir)
+  });
   return Promise.all(promises);
 };
 
