@@ -1,8 +1,8 @@
 const fs = require('fs');
 const utils = require('./utils.js');
 
-const updateLinks = (fileList) => {
-  const updateLinksForFile = (file) => {
+const resolveLinks = (fileList) => {
+  const resolveLinksForFile = (file) => {
     return new Promise((resolve, reject) => {
       if (utils.isGenerated(file) || !utils.fileIsMarkdown(file)) {
         return resolve(file);
@@ -15,7 +15,7 @@ const updateLinks = (fileList) => {
     });
   };
 
-  return Promise.all(fileList.map(updateLinksForFile));
+  return Promise.all(fileList.map(resolveLinksForFile));
 };
 
-module.exports = updateLinks;
+module.exports = resolveLinks;

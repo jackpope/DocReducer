@@ -7,7 +7,7 @@ const fileUtils = require('./file_utils.js');
 
 const addReadmes = (fileList) => {
   const generatedFiles = [];
-  const needsReadmeList = fileList.filter( file => utils.dirNeedsReadme(file, fileList));
+  const needsReadmeList = fileList.filter(file => fileUtils.dirNeedsReadme(file, fileList));
   logger.progress.init(needsReadmeList.length, 'Generating README for each directory');
 
   const addReadmeForDir = (dir) => {
