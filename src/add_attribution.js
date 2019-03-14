@@ -10,7 +10,6 @@ const addAttributions = (fileList) => {
   );
 
   const addAttribution = (file) => {
-    console.log(file.type);
     return new Promise((resolve, reject) => {
       if (!fileUtils.needsAttribution(file)) {
         return resolve(file);
