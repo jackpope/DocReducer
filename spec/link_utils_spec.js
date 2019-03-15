@@ -2,11 +2,16 @@ const linkUtils = require('../src/link_utils.js');
 
 describe('linkUtils.getAbsolute', () => {
   const base = 'https://www.github.com/user/repo/blob/master/doc';
+  const baseWithTrailingSlash = 'https://www.github.com/user/repo/blob/master/doc/';
 
   it('returns an absolute url given a base url and a relative path', () => {
     const path = './my_doc.md';
 
     expect(linkUtils.getAbsolute(base, path)).toEqual(
+      'https://www.github.com/user/repo/blob/master/doc/my_doc.md'
+    );
+
+    expect(linkUtils.getAbsolute(baseWithTrailingSlash, path)).toEqual(
       'https://www.github.com/user/repo/blob/master/doc/my_doc.md'
     );
   });
@@ -15,6 +20,10 @@ describe('linkUtils.getAbsolute', () => {
     const path = '../images/thing.png';
 
     expect(linkUtils.getAbsolute(base, path)).toEqual(
+      'https://www.github.com/user/repo/blob/master/images/thing.png'
+    );
+
+    expect(linkUtils.getAbsolute(baseWithTrailingSlash, path)).toEqual(
       'https://www.github.com/user/repo/blob/master/images/thing.png'
     );
   });
@@ -44,15 +53,20 @@ describe('linkUtils.resolveLinks', () => {
       An exact link to a [known doc](https://www.github.com/user/repo/blob/master/doc/something.md).
     `;
 
-    const knownLocations = ['https://www.github.com/user/repo/blob/master/special_docs/'];
+    const knownLocations = [
+      {
+        url: 'https://www.github.com/user/repo/blob/master/special_docs/',
+        path: '/xyz/'
+      }
+    ];
 
     const absoluteLocation = 'https://www.github.com/user/repo/blob/master/doc/';
 
     it('updates unknown relative links to be exact', () => {
       const output = linkUtils.resolveLinks(relativeMarkdown, knownLocations, absoluteLocation);
-      expect(output).toContain(`
-        Some content with a [link](https://www.github.com/user/repo/blob/master/images/thing.png)
-      `);
+      expect(output).toContain(
+        'Some content with an unknown [link](https://www.github.com/user/repo/blob/master/images/thing.png)'
+      );
     });
 
     it('updates known relative links to be correct', () => {});
