@@ -16,18 +16,18 @@ const progress = {
       complete: '=',
       incomplete: ' ',
       width: 30,
-      renderThrottle: 0,
+      renderThrottle: 0
     });
   },
-  updateCurrent: (count) => {
+  updateCurrent: count => {
     bar.tick(count);
   },
-  addToTotal: (total) => {
+  addToTotal: total => {
     bar.total += total;
   },
   end: () => {
     bar.terminate();
-  },
+  }
 };
 
 const log = (...args) => {
@@ -38,5 +38,5 @@ const log = (...args) => {
 
 module.exports = {
   progress,
-  log,
+  log
 };

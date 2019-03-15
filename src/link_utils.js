@@ -10,8 +10,14 @@ const getAbsolute = (base, relative) => {
   // (omit if 'base' is the current folder without trailing slash)
 
   for (let i = 0; i < parts.length; i++) {
-    if (parts[i] === '.') { continue; }
-    if (parts[i] === '..') { stack.pop(); } else { stack.push(parts[i]); }
+    if (parts[i] === '.') {
+      continue;
+    }
+    if (parts[i] === '..') {
+      stack.pop();
+    } else {
+      stack.push(parts[i]);
+    }
   }
   return stack.join('/');
 };
@@ -36,5 +42,5 @@ const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
 
 module.exports = {
   getAbsolute,
-  resolveLinks,
+  resolveLinks
 };

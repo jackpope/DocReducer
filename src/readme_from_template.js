@@ -12,15 +12,21 @@ const readmeFromTemplate = (org, repo, files) => {
   // Get each file name as a link in a list item in md syntax
   // Sort by relativePath and add indents for each level to group by dir
   const mappedFiles = {};
-  files.forEach((file) => {
+  files.forEach(file => {
     // set keys as relativePaths without file names
-    const groupName = file.relativePath.split('/').slice(0, -1).join() || '__base__';
-    if (!mappedFiles[groupName]) { mappedFiles[groupName] = [] };
+    const groupName =
+      file.relativePath
+        .split('/')
+        .slice(0, -1)
+        .join() || '__base__';
+    if (!mappedFiles[groupName]) {
+      mappedFiles[groupName] = [];
+    }
     mappedFiles[groupName].push(file);
   });
 
   let fileLinkStr = '';
-  Object.keys(mappedFiles).forEach((key) => {
+  Object.keys(mappedFiles).forEach(key => {
     const needsSubSection = key !== '__base__';
     const indentation = needsSubSection ? ' ' : '';
     if (needsSubSection) fileLinkStr += `\n ## ${key}\n`;
@@ -30,9 +36,7 @@ const readmeFromTemplate = (org, repo, files) => {
   });
 
   return html`
-    # ${org}/${repo} \n\n
-    ## Docs: \n
-    ${fileLinkStr}\n\n
+    # ${org}/${repo} \n\n ## Docs: \n ${fileLinkStr}\n\n
   `;
 };
 

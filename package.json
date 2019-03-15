@@ -4,7 +4,8 @@
   "description": "Pull docs from multiple Github repos into a single VuePress site",
   "main": "cli.js",
   "scripts": {
-    "test": "./node_modules/jasmine/bin/jasmine.js"
+    "test": "./node_modules/jasmine/bin/jasmine.js",
+    "lint": "eslint"
   },
   "author": "Jack Pope (@jackpope)",
   "license": "MIT",

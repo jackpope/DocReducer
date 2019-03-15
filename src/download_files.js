@@ -6,36 +6,42 @@ const loadConfig = require('./load_config.js');
 const headers = require('./request_headers.js');
 const logger = require('./logger.js');
 
-const downloadFiles = (fileList) => {
-  const downloadFile = file => new Promise((resolve, reject) => {
-    const baseDir = `${process.cwd() + loadConfig().all.destination + file.repo}/`;
-    const filePath = baseDir + (file.path.split('/').slice(1).join('/') || file.path);
-    const dir = filePath.split('/').slice(0, -1).join('/');
+const downloadFiles = fileList => {
+  const downloadFile = file =>
+    new Promise((resolve, reject) => {
+      const baseDir = `${process.cwd() + loadConfig().all.destination + file.repo}/`;
+      const filePath =
+        baseDir +
+        (file.path
+          .split('/')
+          .slice(1)
+          .join('/') || file.path);
+      const dir = filePath
+        .split('/')
+        .slice(0, -1)
+        .join('/');
 
-    if (!fs.existsSync(dir)) {
-      logger.log(`Creating directory: ${dir}`);
-      mkdirp.sync(dir);
-    }
+      if (!fs.existsSync(dir)) {
+        logger.log(`Creating directory: ${dir}`);
+        mkdirp.sync(dir);
+      }
 
-    request({ url: file.downloadUrl, headers })
-      .on('error', e => reject(e))
-      .pipe(fs.createWriteStream(filePath))
-      .on('error', e => reject(e))
-      .on('close', () => {
-        logger.log('Wrote: ', filePath);
-        logger.progress.updateCurrent(1);
-        resolve(file);
-      });
-  });
+      request({ url: file.downloadUrl, headers })
+        .on('error', e => reject(e))
+        .pipe(fs.createWriteStream(filePath))
+        .on('error', e => reject(e))
+        .on('close', () => {
+          logger.log('Wrote: ', filePath);
+          logger.progress.updateCurrent(1);
+          resolve(file);
+        });
+    });
 
   // Only run download on non-dir files,
   // BUT keep dirs around with resolved promises to pass them to the next step
   const allFiles = [].concat(...fileList);
-  const realFiles = allFiles
-    .filter(file => file.type !== 'dir');
-  const dirFiles = allFiles
-    .filter(file => file.type === 'dir')
-    .map(dir => Promise.resolve(dir));
+  const realFiles = allFiles.filter(file => file.type !== 'dir');
+  const dirFiles = allFiles.filter(file => file.type === 'dir').map(dir => Promise.resolve(dir));
   return Promise.all(realFiles.map(downloadFile).concat(dirFiles));
 };
 

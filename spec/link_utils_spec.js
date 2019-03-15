@@ -44,11 +44,9 @@ describe('linkUtils.resolveLinks', () => {
       An exact link to a [known doc](https://www.github.com/user/repo/blob/master/doc/something.md).
     `;
 
-    const knownLocations = [
-      'https://www.github.com/user/repo/blob/master/special_docs/'
-    ];
+    const knownLocations = ['https://www.github.com/user/repo/blob/master/special_docs/'];
 
-    const absoluteLocation = "https://www.github.com/user/repo/blob/master/doc/";
+    const absoluteLocation = 'https://www.github.com/user/repo/blob/master/doc/';
 
     it('updates unknown relative links to be exact', () => {
       const output = linkUtils.resolveLinks(relativeMarkdown, knownLocations, absoluteLocation);
@@ -57,12 +55,8 @@ describe('linkUtils.resolveLinks', () => {
       `);
     });
 
-    it('updates known relative links to be correct', () => {
+    it('updates known relative links to be correct', () => {});
 
-    });
-
-    it('updates know exact links to be relative', () => {
-
-    });
+    it('updates know exact links to be relative', () => {});
   });
 });

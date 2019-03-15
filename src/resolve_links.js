@@ -1,8 +1,8 @@
 const fs = require('fs');
 const utils = require('./utils.js');
 
-const resolveLinks = (fileList) => {
-  const resolveLinksForFile = (file) => {
+const resolveLinks = fileList => {
+  const resolveLinksForFile = file => {
     return new Promise((resolve, reject) => {
       if (utils.isGenerated(file) || !utils.fileIsMarkdown(file)) {
         return resolve(file);

@@ -5,9 +5,7 @@
       "repos": [
         {
           "name": "repo-name",
-          "directories": [
-            "doc"
-          ],
+          "directories": ["doc"],
           "readmeName": "README.md"
         }
       ]

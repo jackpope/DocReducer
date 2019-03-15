@@ -4,23 +4,23 @@ const loadConfig = require('./load_config.js');
 const headers = require('./request_headers.js');
 const logger = require('./logger.js');
 
-const buildReadmeData = (readme) => {
-  const downloadUrl = `https://raw.githubusercontent.com/${readme.org}/${readme.repo}/master/${readme.dir}`;
+const buildReadmeData = readme => {
+  const downloadUrl = `https://raw.githubusercontent.com/${readme.org}/${readme.repo}/master/${
+    readme.dir
+  }`;
   const actualUrl = `https://github.com/${readme.org}/${readme.repo}/blob/master/${readme.dir}`;
-  const promise = Promise.resolve(
-    [
-      {
-        name: 'README.md',
-        type: 'file',
-        path: readme.dir,
-        relativePath: readme.dir,
-        downloadUrl,
-        actualUrl,
-        org: readme.org,
-        repo: readme.repo,
-      },
-    ],
-  );
+  const promise = Promise.resolve([
+    {
+      name: 'README.md',
+      type: 'file',
+      path: readme.dir,
+      relativePath: readme.dir,
+      downloadUrl,
+      actualUrl,
+      org: readme.org,
+      repo: readme.repo
+    }
+  ]);
 
   logger.log('Found: ', actualUrl);
   logger.progress.addToTotal(1);
@@ -28,23 +28,23 @@ const buildReadmeData = (readme) => {
   return promise;
 };
 
-const requestDirRecursive = (startingDir) => {
+const requestDirRecursive = startingDir => {
   const fileList = [];
   const dirQueue = [];
 
-  const requestDir = (dir) => {
+  const requestDir = dir => {
     // Store dir data in the fileList to pass it along to following steps
     fileList.push(Object.assign(dir, { type: 'dir', path: dir.dir }));
 
-    const getItemList = (readDir) => {
+    const getItemList = readDir => {
       const requestData = {
         url: `https://api.github.com/repos/${readDir.org}/${readDir.repo}/contents/${readDir.dir}`,
-        headers,
+        headers
       };
       return new Promise((resolve, reject) => {
         request(requestData, (error, response, body) => {
           if (!error && response.statusCode === 200) {
-            const itemList = JSON.parse(body).map((item) => {
+            const itemList = JSON.parse(body).map(item => {
               if (item.type !== 'dir') {
                 logger.progress.addToTotal(1);
               }
@@ -57,7 +57,7 @@ const requestDirRecursive = (startingDir) => {
                 downloadUrl: item.download_url,
                 actualUrl: item._links.html,
                 org: readDir.org,
-                repo: readDir.repo,
+                repo: readDir.repo
               };
             });
 
@@ -69,8 +69,8 @@ const requestDirRecursive = (startingDir) => {
       });
     };
 
-    const processItemList = (itemList) => {
-      itemList.forEach((item) => {
+    const processItemList = itemList => {
+      itemList.forEach(item => {
         if (item.type === 'dir') {
           dirQueue.push(item);
           return;
@@ -97,8 +97,8 @@ const requestDirRecursive = (startingDir) => {
 
 const findFiles = () => {
   logger.progress.init(0, 'Downloading documents');
-  const promises = loadConfig().directories.map((dir) => {
-    return dir.isReadme ? buildReadmeData(dir) : requestDirRecursive(dir)
+  const promises = loadConfig().directories.map(dir => {
+    return dir.isReadme ? buildReadmeData(dir) : requestDirRecursive(dir);
   });
   return Promise.all(promises);
 };
