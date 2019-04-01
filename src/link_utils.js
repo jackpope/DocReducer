@@ -1,6 +1,12 @@
-const isAbsolute = url => /^(?:[a-z]+:)?/.test(url);
+const isAbsolute = url =>
+  /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/.test(
+    url
+  );
 
-const getAbsolute = (baseUrl, relativePath) => {
+const getAbsolute = (baseUrl, path) => {
+  if (isAbsolute(path)) return path;
+  // If relative path starts with /, default to current directory (./)
+  const relativePath = path[0] === '/' ? `.${path}` : path;
   const stack = baseUrl.split('/');
   const parts = relativePath.split('/');
 
@@ -28,20 +34,14 @@ const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
   const markdownLinkMatcher = /\[([^\[\]]+)\]\(([^)]+)/gm;
   let markdownContentCopy = markdownContent;
   let match;
-  //
-  // ./doc/thing.md => /thing.md (START HERE)
-  // github.com../thing.md => /thing.md
-  // ../images/pic.png => github.com../images/pic.png
-  //
   // eslint-disable-next-line no-cond-assign
   while ((match = markdownLinkMatcher.exec(markdownContent)) !== null) {
-    console.log('MATCH', absoluteLocation, match[2]);
     const absoluteUrl = getAbsolute(absoluteLocation, match[2]);
-    console.log(absoluteUrl);
-    const knownFile = knownFiles.find(fileData => fileData.url === absoluteUrl);
+    const knownFile = knownFiles.find(fileData => fileData.url + fileData.path === absoluteUrl);
+
     if (knownFile) {
       const filePath = knownFile.path;
-      markdownContentCopy = markdownContentCopy.replace(match[2], filePath);
+      markdownContentCopy = markdownContentCopy.replace(match[2], `./${filePath}`);
     } else {
       markdownContentCopy = markdownContentCopy.replace(match[2], absoluteUrl);
     }
