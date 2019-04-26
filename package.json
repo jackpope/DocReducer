@@ -1,8 +1,8 @@
 {
-  "name": "multi-repo-docs",
+  "name": "doc-reducer",
   "version": "1.0.0",
   "description": "Pull docs from multiple Github repos into a single VuePress site",
-  "main": "cli.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "./node_modules/jasmine/bin/jasmine.js",
     "lint": "eslint"
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "common-tags": "^1.8.0",
+    "glob": "^7.1.3",
     "mkdirp": "^0.5.1",
     "progress": "^2.0.3",
     "request": "^2.88.0"
