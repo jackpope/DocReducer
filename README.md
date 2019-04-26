@@ -2,15 +2,18 @@
 
 ## Consolidate documentation across many Github repos with a VuePress site
 
-<!-- ### Usage:
+### Usage:
 
 #### Using yarn
 
-1. `yarn add vuepress doc-reducer -D`
-2. `touch doc-reducer.json`
-3. Add configuration to `doc-reducer.json`
-4. `yarn doc-reducer`
-5. `yarn vuepress dev <doc desitination directory>` -->
+In a new project directory...
+
+1. `yarn init`
+2. `yarn add vuepress doc-reducer`
+3. `touch doc-reducer.json`
+4. Add configuration to `doc-reducer.json` ([Example](./doc-reducer-example.json))
+5. `yarn doc-reducer`
+6. `yarn vuepress dev <doc desitination directory>`
 
 ### Flow
 

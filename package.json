@@ -10,7 +10,7 @@
   "author": "Jack Pope (@jackpope)",
   "license": "MIT",
   "bin": {
-    "pull-docs": "./src/cli.js"
+    "doc-reducer": "./src/cli.js"
   },
   "dependencies": {
     "common-tags": "^1.8.0",
