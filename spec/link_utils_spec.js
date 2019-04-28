@@ -41,15 +41,22 @@ describe('linkUtils.resolveLinks', () => {
       Some content with a known [link](docs/doc.md) that is relative.
     `;
 
+    const knownRelativeMarkdownInCurrentDir = `
+    # headline
+      Some content with a known [link](./doc.md) that is relative.
+    `;
+
     const absoluteMarkdown = `
       # headline
       An exact link to a [known doc](https://www.github.com/user/repo/blob/master/docs/doc.md).
     `;
 
+    const localMarkdown = `a table of [contents](#part1)`;
+
     const knownLocations = [
       {
-        url: 'https://www.github.com/user/repo/blob/master/docs/',
-        path: 'doc.md'
+        actualUrl: 'https://www.github.com/user/repo/blob/master/docs/doc.md',
+        path: 'docs/doc.md'
       }
     ];
 
@@ -73,6 +80,15 @@ describe('linkUtils.resolveLinks', () => {
       expect(output).toContain('Some content with a known [link](./doc.md)');
     });
 
+    it('does not update known relative links that are already correct', () => {
+      const output = linkUtils.resolveLinks(
+        knownRelativeMarkdownInCurrentDir,
+        knownLocations,
+        'https://www.github.com/user/repo/blob/master/docs/'
+      );
+      expect(output).toContain('a known [link](./doc.md)');
+    });
+
     it('updates known exact links to be relative', () => {
       const output = linkUtils.resolveLinks(
         absoluteMarkdown,
@@ -80,6 +96,15 @@ describe('linkUtils.resolveLinks', () => {
         'https://www.github.com/user/repo/blob/master/docs/'
       );
       expect(output).toContain('a [known doc](./doc.md)');
+    });
+
+    it('does not update local header references', () => {
+      const output = linkUtils.resolveLinks(
+        localMarkdown,
+        knownLocations,
+        'https://www.github.com/user/repo/blob/master/docs/'
+      );
+      expect(output).toEqual(localMarkdown);
     });
   });
 });

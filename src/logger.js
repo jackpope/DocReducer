@@ -32,6 +32,7 @@ const progress = {
 
 const log = (...args) => {
   if (verboseMode) {
+    // eslint-disable-next-line no-console
     console.log(...args);
   }
 };

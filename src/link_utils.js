@@ -36,12 +36,14 @@ const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
   let match;
   // eslint-disable-next-line no-cond-assign
   while ((match = markdownLinkMatcher.exec(markdownContent)) !== null) {
+    const linkIsLocalHeader = match[2][0] === '#';
+    if (linkIsLocalHeader) return markdownContentCopy;
+
     const absoluteUrl = getAbsolute(absoluteLocation, match[2]);
-    const knownFile = knownFiles.find(fileData => fileData.url + fileData.path === absoluteUrl);
+    const knownFile = knownFiles.find(fileData => fileData.actualUrl === absoluteUrl);
 
     if (knownFile) {
-      const filePath = knownFile.path;
-      markdownContentCopy = markdownContentCopy.replace(match[2], `./${filePath}`);
+      markdownContentCopy = markdownContentCopy.replace(match[2], `${knownFile.relativePath}`);
     } else {
       markdownContentCopy = markdownContentCopy.replace(match[2], absoluteUrl);
     }

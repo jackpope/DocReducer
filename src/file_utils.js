@@ -12,18 +12,12 @@ const isReadme = file => {
 
 const findLocalFilePath = file => {
   const baseDir = `${process.cwd() + loadConfig().all.destination + file.repo}/`;
-  const filePath =
-    baseDir +
-    file.path
-      .split('/')
-      .slice(1)
-      .join('/');
-
+  const filePath = baseDir + file.relativePath;
   return filePath;
 };
 
 const needsAttribution = file => {
-  return file.type !== 'dir' && !!~file.name.toLowerCase().indexOf('md') && !isReadme(file);
+  return file.type !== 'dir' && isMarkdown(file) && !isReadme(file);
 };
 
 const attributionTemplate = file => {
@@ -32,6 +26,10 @@ const attributionTemplate = file => {
     doc there and then use \`doc-reducer\` cmd to update it here. \n Original location:
     [${file.org}/${file.repo}/${file.path}](${file.actualUrl})\n
   `;
+};
+
+const needsLinkResolution = file => {
+  return file.type !== 'dir' && isMarkdown(file);
 };
 
 const dirFiles = (dir, allFiles, rootOnly = false) => {
@@ -66,11 +64,17 @@ const dirNeedsReadme = (dir, allFiles) => {
   return dirContainsMdFile(dir, allFiles) && !dirContainsReadmeFile(dir, allFiles);
 };
 
+const canRead = file => {
+  return file.type !== 'dir' && file.actualUrl && isMarkdown(file);
+};
+
 module.exports = {
   findLocalFilePath,
   needsAttribution,
   attributionTemplate,
   dirNeedsReadme,
   dirFiles,
-  isMarkdown
+  isMarkdown,
+  canRead,
+  needsLinkResolution
 };
