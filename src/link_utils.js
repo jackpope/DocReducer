@@ -30,7 +30,29 @@ const getAbsolute = (baseUrl, path) => {
   return stack.join('/');
 };
 
-const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
+const getRelative = (fromLink, toLink) => {
+  let fromLinkRelative = '';
+  const removeFirstTwoChars = toLink.relativePath.slice(0, 2) === './';
+  let toLinkRelative = removeFirstTwoChars
+    ? toLink.relativePath.slice(2, toLink.relativePath.length)
+    : toLink.relativePath;
+
+  const fromDirCount = fromLink.relativePath.split('/').length - 2;
+
+  for (let index = 0; index < fromDirCount; index++) {
+    fromLinkRelative += '../';
+  }
+
+  if (fromLink.repo !== toLink.repo) {
+    toLinkRelative = `../${toLink.repo}/${toLinkRelative}`;
+  }
+
+  const result = (fromLinkRelative || './') + toLinkRelative;
+
+  return result;
+};
+
+const resolveLinks = (markdownContent, knownFiles, currentFile) => {
   const markdownLinkMatcher = /\[([^[\]]+)\]\(([^)]+)/gm;
   let markdownContentCopy = markdownContent;
   let match;
@@ -39,11 +61,15 @@ const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
     const linkIsLocalHeader = match[2][0] === '#';
     if (linkIsLocalHeader) return markdownContentCopy;
 
-    const absoluteUrl = getAbsolute(absoluteLocation, match[2]);
+    const absLocation = currentFile.actualUrl.replace(currentFile.name, '');
+    const absoluteUrl = getAbsolute(absLocation, match[2]);
     const knownFile = knownFiles.find(fileData => fileData.actualUrl === absoluteUrl);
 
     if (knownFile) {
-      markdownContentCopy = markdownContentCopy.replace(match[2], `${knownFile.relativePath}`);
+      markdownContentCopy = markdownContentCopy.replace(
+        match[2],
+        getRelative(currentFile, knownFile)
+      );
     } else {
       markdownContentCopy = markdownContentCopy.replace(match[2], absoluteUrl);
     }
@@ -54,5 +80,6 @@ const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
 
 module.exports = {
   getAbsolute,
+  getRelative,
   resolveLinks
 };
