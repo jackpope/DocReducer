@@ -31,7 +31,7 @@ const getAbsolute = (baseUrl, path) => {
 };
 
 const resolveLinks = (markdownContent, knownFiles, absoluteLocation) => {
-  const markdownLinkMatcher = /\[([^\[\]]+)\]\(([^)]+)/gm;
+  const markdownLinkMatcher = /\[([^[\]]+)\]\(([^)]+)/gm;
   let markdownContentCopy = markdownContent;
   let match;
   // eslint-disable-next-line no-cond-assign

@@ -17,8 +17,6 @@ const resolveLinks = fileList => {
 
       fs.readFile(fileUtils.findLocalFilePath(file), 'utf8', (readError, data) => {
         if (readError) {
-          console.log(file);
-          console.log(fileUtils.findLocalFilePath(file));
           return reject(readError);
         }
 
