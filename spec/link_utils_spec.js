@@ -29,7 +29,7 @@ describe('linkUtils.getAbsolute', () => {
   });
 });
 
-describe('linkUtils.resolveLinks', () => {
+xdescribe('linkUtils.resolveLinks', () => {
   describe('given markdown content', () => {
     const unkownRelativeMarkdown = `
       # headline

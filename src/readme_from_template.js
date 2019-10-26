@@ -36,7 +36,7 @@ const readmeFromTemplate = (org, repo, files) => {
   });
 
   return html`
-    # ${org}/${repo} \n\n ## Docs: \n ${fileLinkStr}\n\n
+    # ${org}/${repo} ## Docs: ${fileLinkStr}
   `;
 };
 

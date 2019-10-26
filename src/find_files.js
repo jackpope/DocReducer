@@ -5,9 +5,7 @@ const headers = require('./request_headers.js');
 const logger = require('./logger.js');
 
 const buildReadmeData = readme => {
-  const downloadUrl = `https://raw.githubusercontent.com/${readme.org}/${readme.repo}/master/${
-    readme.dir
-  }`;
+  const downloadUrl = `https://raw.githubusercontent.com/${readme.org}/${readme.repo}/master/${readme.dir}`;
   const actualUrl = `https://github.com/${readme.org}/${readme.repo}/blob/master/${readme.dir}`;
   const promise = Promise.resolve([
     {
@@ -34,7 +32,7 @@ const requestDirRecursive = startingDir => {
 
   const requestDir = dir => {
     // Store dir data in the fileList to pass it along to following steps
-    fileList.push(Object.assign(dir, { type: 'dir', path: dir.dir }));
+    fileList.push({ ...dir, type: 'dir', path: dir.dir });
 
     const getItemList = readDir => {
       const requestData = {
@@ -63,7 +61,8 @@ const requestDirRecursive = startingDir => {
 
             resolve(itemList);
           } else {
-            reject(Object.assign({}, JSON.parse(body), { for: readDir }));
+            // eslint-disable-next-line prefer-promise-reject-errors
+            reject({ ...JSON.parse(body), for: readDir });
           }
         });
       });
@@ -82,7 +81,7 @@ const requestDirRecursive = startingDir => {
 
       if (dirQueue.length) {
         let nextDir = dirQueue.shift();
-        nextDir = Object.assign({}, nextDir, { dir: nextDir.path });
+        nextDir = { ...nextDir, dir: nextDir.path };
         return requestDir(nextDir);
       }
 

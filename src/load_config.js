@@ -18,23 +18,18 @@ const loadConfig = () => {
     src.repos.forEach(repo => {
       const repoName = repo.name;
       repo.directories.forEach(dir => {
-        const dirState = Object.assign({}, directoryState, {
-          org: orgName,
-          repo: repoName,
-          dir
-        });
+        const dirState = { ...directoryState, org: orgName, repo: repoName, dir };
         config.directories.push(dirState);
       });
 
       if (repo.readmeName) {
-        config.directories.push(
-          Object.assign({}, directoryState, {
-            org: orgName,
-            repo: repoName,
-            dir: repo.readmeName,
-            isReadme: true
-          })
-        );
+        config.directories.push({
+          ...directoryState,
+          org: orgName,
+          repo: repoName,
+          dir: repo.readmeName,
+          isReadme: true
+        });
       }
     });
   });
