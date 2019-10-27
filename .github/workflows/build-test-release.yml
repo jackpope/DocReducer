@@ -1,0 +1,35 @@
+name: Build, test, and release
+
+on: [push, pull_request]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: yarn install
+      - run: yarn test
+      - run: yarn lint
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - uses: cycjimmy/semantic-release-action@v2
+        with:
+         branch: master
+         extra_plugins: |
+            @semantic-release/changelog
+            @semantic-release/commit-analyzer
+            @semantic-release/git
+            @semantic-release/github
+            @semantic-release/npm
+            @semantic-release/release-notes-generator
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
