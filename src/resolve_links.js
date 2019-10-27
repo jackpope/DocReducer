@@ -20,8 +20,7 @@ const resolveLinks = fileList => {
           return reject(readError);
         }
 
-        const absLocation = file.actualUrl.replace(file.name, '');
-        const resolvedData = linkUtils.resolveLinks(data, fileList, absLocation);
+        const resolvedData = linkUtils.resolveLinks(data, fileList, file);
 
         fs.writeFile(fileUtils.findLocalFilePath(file), resolvedData, writeError => {
           if (writeError) {

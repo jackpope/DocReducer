@@ -29,7 +29,41 @@ describe('linkUtils.getAbsolute', () => {
   });
 });
 
-xdescribe('linkUtils.resolveLinks', () => {
+describe('linkUtils.getRelative', () => {
+  const files = [
+    {
+      actualUrl: 'https://www.github.com/user/repo/blob/master/docs/doc.md',
+      name: 'doc.md',
+      path: 'docs/doc.md',
+      relativePath: './doc.md',
+      repo: 'repo'
+    },
+    {
+      actualUrl: 'https://www.github.com/user/repo/blob/master/docs/subdir/doc.md',
+      name: 'doc.md',
+      path: 'docs/subdir/doc.md',
+      relativePath: './subdir/doc.md',
+      repo: 'repo'
+    },
+    {
+      actualUrl: 'https://www.github.com/user/repo2/blob/master/docs/sub/doc.md',
+      name: 'doc.md',
+      path: 'docs/sub/doc.md',
+      relativePath: './sub/docs.md',
+      repo: 'repo2'
+    }
+  ];
+
+  it('returns a relative path from one absolute location to another within the same repo', () => {
+    expect(linkUtils.getRelative(files[1], files[0])).toEqual('../doc.md');
+  });
+
+  it('returns a relative path from one absolute location to another within another known repo', () => {
+    expect(linkUtils.getRelative(files[2], files[0])).toEqual('../../repo/doc.md');
+  });
+});
+
+describe('linkUtils.resolveLinks', () => {
   describe('given markdown content', () => {
     const unkownRelativeMarkdown = `
       # headline
@@ -56,7 +90,24 @@ xdescribe('linkUtils.resolveLinks', () => {
     const knownLocations = [
       {
         actualUrl: 'https://www.github.com/user/repo/blob/master/docs/doc.md',
-        path: 'docs/doc.md'
+        name: 'doc.md',
+        path: 'docs/doc.md',
+        relativePath: './doc.md',
+        repo: 'repo'
+      },
+      {
+        actualUrl: 'https://www.github.com/user/repo/blob/master/docs/doc.md',
+        name: 'docs/doc.md',
+        path: 'docs/doc.md',
+        relativePath: './doc.md',
+        repo: 'repo'
+      },
+      {
+        actualUrl: 'https://www.github.com/user/repo2/blob/master/docs/sub/doc.md',
+        name: 'doc.md',
+        path: 'docs/sub/doc.md',
+        relativePath: './sub/docs.md',
+        repo: 'repo2'
       }
     ];
 
@@ -64,7 +115,7 @@ xdescribe('linkUtils.resolveLinks', () => {
       const output = linkUtils.resolveLinks(
         unkownRelativeMarkdown,
         knownLocations,
-        'https://www.github.com/user/repo/blob/master/docs/'
+        knownLocations[0]
       );
       expect(output).toContain(
         'Some content with an unknown [link](https://www.github.com/user/repo/blob/master/images/thing.png)'
@@ -75,7 +126,7 @@ xdescribe('linkUtils.resolveLinks', () => {
       const output = linkUtils.resolveLinks(
         knownRelativeMarkdown,
         knownLocations,
-        'https://www.github.com/user/repo/blob/master/'
+        knownLocations[1]
       );
       expect(output).toContain('Some content with a known [link](./doc.md)');
     });
@@ -84,26 +135,24 @@ xdescribe('linkUtils.resolveLinks', () => {
       const output = linkUtils.resolveLinks(
         knownRelativeMarkdownInCurrentDir,
         knownLocations,
-        'https://www.github.com/user/repo/blob/master/docs/'
+        knownLocations[0]
       );
       expect(output).toContain('a known [link](./doc.md)');
     });
 
-    it('updates known exact links to be relative', () => {
-      const output = linkUtils.resolveLinks(
-        absoluteMarkdown,
-        knownLocations,
-        'https://www.github.com/user/repo/blob/master/docs/'
-      );
+    it('updates known exact links to be relative within the same repo', () => {
+      const output = linkUtils.resolveLinks(absoluteMarkdown, knownLocations, knownLocations[0]);
       expect(output).toContain('a [known doc](./doc.md)');
     });
 
+    it('updates known exact links to be relative from another repo', () => {
+      // Go back out to root, then back in on another project
+      const output = linkUtils.resolveLinks(absoluteMarkdown, knownLocations, knownLocations[2]);
+      expect(output).toContain('a [known doc](../../repo/doc.md)');
+    });
+
     it('does not update local header references', () => {
-      const output = linkUtils.resolveLinks(
-        localMarkdown,
-        knownLocations,
-        'https://www.github.com/user/repo/blob/master/docs/'
-      );
+      const output = linkUtils.resolveLinks(localMarkdown, knownLocations, knownLocations[0]);
       expect(output).toEqual(localMarkdown);
     });
   });
