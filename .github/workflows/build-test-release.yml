@@ -13,13 +13,7 @@ jobs:
       - run: yarn install
       - run: yarn test
       - run: yarn lint
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
+        if: github
       - uses: cycjimmy/semantic-release-action@v2
         with:
          branch: master
@@ -31,5 +25,5 @@ jobs:
             @semantic-release/npm
             @semantic-release/release-notes-generator
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
