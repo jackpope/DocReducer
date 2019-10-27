@@ -2,6 +2,7 @@
   "name": "doc-reducer",
   "version": "1.0.1",
   "description": "Pull docs from multiple Github repos into a single VuePress site",
+  "homepage": "https://www.github.com/jackpope/DocReducer",
   "main": "src/index.js",
   "scripts": {
     "test": "./node_modules/jasmine/bin/jasmine.js",
